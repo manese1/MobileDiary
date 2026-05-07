@@ -4,25 +4,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 @Composable
-fun UploadHomeworkScreen(navController: NavController) {
-   Box(
-       modifier = Modifier.fillMaxSize(),
-       contentAlignment = Alignment.Center
-   ) {
-       Text("Access Denied")
-   }
+fun UploadHomeworkScreen(
+    navController: NavController
+) {
 
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    var classId by remember { mutableStateOf("") }
 
     val database = FirebaseDatabase.getInstance().reference
+    val teacherId = FirebaseAuth.getInstance().currentUser?.uid
 
     Column(
         modifier = Modifier
@@ -38,6 +35,7 @@ fun UploadHomeworkScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Homework title
         OutlinedTextField(
             value = title,
             onValueChange = { title = it },
@@ -47,10 +45,21 @@ fun UploadHomeworkScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Homework description
         OutlinedTextField(
             value = description,
             onValueChange = { description = it },
             label = { Text("Homework Description") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Class ID
+        OutlinedTextField(
+            value = classId,
+            onValueChange = { classId = it },
+            label = { Text("Class ID") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -59,15 +68,19 @@ fun UploadHomeworkScreen(navController: NavController) {
         Button(
             onClick = {
 
-                val homeworkId = database.child("homework").push().key
+                val homeworkId =
+                    database.child("homework").push().key
 
                 val homeworkMap = mapOf(
                     "id" to homeworkId,
                     "title" to title,
-                    "description" to description
+                    "description" to description,
+                    "classId" to classId,
+                    "teacherId" to teacherId
                 )
 
                 if (homeworkId != null) {
+
                     database.child("homework")
                         .child(homeworkId)
                         .setValue(homeworkMap)
@@ -77,15 +90,5 @@ fun UploadHomeworkScreen(navController: NavController) {
         ) {
             Text("Upload Homework")
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun UploadHomeworkPreview() {
-    MaterialTheme {
-        UploadHomeworkScreen(
-            navController = rememberNavController()
-        )
     }
 }

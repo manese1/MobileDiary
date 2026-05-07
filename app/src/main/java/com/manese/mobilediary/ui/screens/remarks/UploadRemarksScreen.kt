@@ -4,27 +4,21 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 @Composable
 fun UploadRemarksScreen(
-    navController: NavController,
+    navController: NavController
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Access Denied")
-    }
 
-    var studentName by remember { mutableStateOf("") }
+    var studentId by remember { mutableStateOf("") }
     var remark by remember { mutableStateOf("") }
 
     val database = FirebaseDatabase.getInstance().reference
+    val teacherId = FirebaseAuth.getInstance().currentUser?.uid
 
     Column(
         modifier = Modifier
@@ -40,15 +34,17 @@ fun UploadRemarksScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Student ID
         OutlinedTextField(
-            value = studentName,
-            onValueChange = { studentName = it },
-            label = { Text("Student Name") },
+            value = studentId,
+            onValueChange = { studentId = it },
+            label = { Text("Student ID") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Remark
         OutlinedTextField(
             value = remark,
             onValueChange = { remark = it },
@@ -61,15 +57,19 @@ fun UploadRemarksScreen(
         Button(
             onClick = {
 
-                val remarkId = database.child("remarks").push().key
+                val remarkId =
+                    database.child("remarks").push().key
 
                 val remarkMap = mapOf(
                     "id" to remarkId,
-                    "studentName" to studentName,
-                    "remark" to remark
+                    "studentId" to studentId,
+                    "teacherId" to teacherId,
+                    "remark" to remark,
+                    "timestamp" to System.currentTimeMillis()
                 )
 
                 if (remarkId != null) {
+
                     database.child("remarks")
                         .child(remarkId)
                         .setValue(remarkMap)
@@ -79,15 +79,5 @@ fun UploadRemarksScreen(
         ) {
             Text("Upload Remark")
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun UploadRemarksPreview() {
-    MaterialTheme {
-        UploadRemarksScreen(
-            navController = rememberNavController()
-        )
     }
 }

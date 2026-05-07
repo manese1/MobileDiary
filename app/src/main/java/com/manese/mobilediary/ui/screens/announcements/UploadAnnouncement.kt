@@ -4,25 +4,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.google.firebase.database.FirebaseDatabase
 
 @Composable
 fun UploadAnnouncementScreen(
     navController: NavController
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-    ) {
-        Text("Access Denied")
-    }
 
     var title by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
+    var classId by remember { mutableStateOf("") }
+
+    var scope by remember { mutableStateOf("GLOBAL") }
 
     val database = FirebaseDatabase.getInstance().reference
 
@@ -40,6 +35,7 @@ fun UploadAnnouncementScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Title
         OutlinedTextField(
             value = title,
             onValueChange = { title = it },
@@ -49,12 +45,60 @@ fun UploadAnnouncementScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Message
         OutlinedTextField(
             value = message,
             onValueChange = { message = it },
             label = { Text("Announcement Message") },
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Scope Selector
+        Text("Announcement Scope")
+
+        Row {
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+
+                RadioButton(
+                    selected = scope == "GLOBAL",
+                    onClick = {
+                        scope = "GLOBAL"
+                    }
+                )
+
+                Text("Global")
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+
+                RadioButton(
+                    selected = scope == "CLASS",
+                    onClick = {
+                        scope = "CLASS"
+                    }
+                )
+
+                Text("Class")
+            }
+        }
+
+        // Class ID only if CLASS selected
+        if (scope == "CLASS") {
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = classId,
+                onValueChange = { classId = it },
+                label = { Text("Class ID") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -67,10 +111,13 @@ fun UploadAnnouncementScreen(
                 val announcementMap = mapOf(
                     "id" to announcementId,
                     "title" to title,
-                    "message" to message
+                    "message" to message,
+                    "scope" to scope,
+                    "classId" to classId
                 )
 
                 if (announcementId != null) {
+
                     database.child("announcements")
                         .child(announcementId)
                         .setValue(announcementMap)
@@ -80,15 +127,5 @@ fun UploadAnnouncementScreen(
         ) {
             Text("Upload Announcement")
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun UploadAnnouncementPreview() {
-    MaterialTheme {
-        UploadAnnouncementScreen(
-            navController = rememberNavController()
-        )
     }
 }

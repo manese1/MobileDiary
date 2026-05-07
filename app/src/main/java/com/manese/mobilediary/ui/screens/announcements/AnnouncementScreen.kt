@@ -3,119 +3,95 @@ package com.manese.mobilediary.ui.screens.announcements
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import androidx.compose.ui.tooling.preview.Preview
-import com.manese.mobilediary.navigation.*
-import com.manese.mobilediary.ui.screens.homework.HomeworkScreen
+import com.google.firebase.database.*
+import com.manese.mobilediary.models.Announcements
 
-data class Announcement(
-    val title: String,
-    val message: String
-)
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnnouncementScreen(
-    navController: NavController,
-    role: String = "STUDENT"
+    navController: NavController
 ) {
 
+    val database =
+        FirebaseDatabase.getInstance().reference
+
     var announcements by remember {
-        mutableStateOf(
-            listOf(
-                Announcement("School Closed", "School will be closed on Friday"),
-                Announcement("Sports Day", "Bring sports gear tomorrow")
-            )
-        )
+        mutableStateOf(listOf<Announcements>())
     }
 
-    Scaffold(
+    // 🔥 Fetch from Firebase
+    LaunchedEffect(Unit) {
 
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text("Mobile Diary")
-                        Text("Your School Name", style = MaterialTheme.typography.labelSmall)
+        database.child("announcements")
+            .addValueEventListener(object : ValueEventListener {
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    val list = mutableListOf<Announcements>()
+
+                    for (snap in snapshot.children) {
+
+                        val announcement =
+                            snap.getValue(Announcements::class.java)
+
+                        if (announcement != null) {
+                            list.add(announcement)
+                        }
                     }
+
+                    announcements = list
                 }
-            )
-        },
 
-        bottomBar = {
-            NavigationBar {
+                override fun onCancelled(error: DatabaseError) {
 
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { navController.navigate(ROUT_HOME) },
-                    icon = { Icon(Icons.Default.Home, null) },
-                    label = { Text("Home") }
-                )
-
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { navController.navigate(ROUT_HOMEWORK) },
-                    icon = { Icon(Icons.Default.Book, null) },
-                    label = { Text("Homework") }
-                )
-
-                NavigationBarItem(
-                    selected = true,
-                    onClick = { },
-                    icon = { Icon(Icons.Default.Notifications, null) },
-                    label = { Text("Announcement") }
-                )
-
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { navController.navigate(ROUT_PROFILE) },
-                    icon = { Icon(Icons.Default.Person, null) },
-                    label = { Text("Profile") }
-                )
-            }
-        },
-
-        floatingActionButton = {
-            if (role == "TEACHER") {
-                FloatingActionButton(onClick = {
-                    announcements = announcements + Announcement("New", "Posted by teacher")
-                }) {
-                    IconButton(onClick = {navController.navigate(ROUT_UPLOAD_ANNOUNCEMENT)}) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add Announcement")}
                 }
-            }
-        }
+            })
+    }
 
-    ) { paddingValues ->
+    // UI
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(announcements) {
-                AnnouncementCard(it)
+        items(announcements) { announcement ->
+
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+
+                    Text(
+                        text = announcement.title,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(text = announcement.message)
+                }
             }
         }
     }
 }
 
 @Composable
-fun AnnouncementCard(announcement: Announcement) {
+fun AnnouncementCard(announcements: Announcements) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(announcement.title, style = MaterialTheme.typography.titleLarge)
+            Text(announcements.title, style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(8.dp))
-            Text(announcement.message)
+            Text(announcements.message)
         }
     }
 }
@@ -125,8 +101,7 @@ fun AnnouncementCard(announcement: Announcement) {
 fun AnnouncementStudentPreview() {
     MaterialTheme {
         AnnouncementScreen(
-            navController = androidx.navigation.compose.rememberNavController(),
-            role = "STUDENT"
+            navController = androidx.navigation.compose.rememberNavController()
         )
     }
 }
@@ -136,8 +111,7 @@ fun AnnouncementStudentPreview() {
 fun AnnouncementTeacherPreview() {
     MaterialTheme {
         AnnouncementScreen(
-            navController = androidx.navigation.compose.rememberNavController(),
-            role = "TEACHER"
+            navController = androidx.navigation.compose.rememberNavController()
         )
     }
 }
