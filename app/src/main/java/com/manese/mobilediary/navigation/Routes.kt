@@ -1,0 +1,18 @@
+package com.manese.mobilediary.navigation
+
+const val ROUT_HOME = "home"
+const val ROUT_LOGIN = "login"
+const val ROUT_SPLASH = "splash"
+const val ROUT_ANNOUNCEMENTS = "announcements"
+const val ROUT_HOMEWORK = "homework"
+const val ROUT_PROFILE = "profile"
+const val ROUT_REMARKS = "remarks"
+const val ROUT_TEACHER_REGISTER = "register_teacher"
+const val ROUT_REGISTER_STUDENT = "register_student"
+const val ROUT_REGISTER = "register"
+const val ROUT_UPLOAD_HOMEWORK = "upload_homework"
+const val ROUT_UPLOAD_ANNOUNCEMENT = "upload_announcement"
+const val ROUT_UPLOAD_REMARKS = "upload_remark"
+const val ROUT_LINK_ACCOUNTS = "link_account"
+const val ROUT_CREATE_CLASS = "create_class"
+const val ROUT_ASSIGN_CLASS = "assign_class"

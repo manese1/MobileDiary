@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "294233441439",
+    "project_id": "mobilediary",
+    "storage_bucket": "mobilediary.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:294233441439:android:290e3fa412e0ca89a58eaa",
+        "android_client_info": {
+          "package_name": "com.manese.mobilediary"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBy3Q2MfCMcW-ZwECf-uC5A4x_L8mfvd7s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
