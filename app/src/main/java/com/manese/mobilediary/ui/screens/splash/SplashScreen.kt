@@ -18,6 +18,7 @@ import com.manese.mobilediary.navigation.ROUT_HOME
 import com.manese.mobilediary.navigation.ROUT_LOGIN
 import com.manese.mobilediary.navigation.ROUT_SPLASH
 import com.manese.mobilediary.navigation.ROUT_TEACHER_REGISTER
+import com.manese.mobilediary.ui.theme.Blue01
 import kotlinx.coroutines.delay
 
 @Composable
@@ -42,14 +43,7 @@ fun SplashScreen(navController: NavController) {
 
     Box(
         modifier = Modifier.fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF1565C0),
-                        Color(0xFF42A5F5)
-                    )
-                )
-            ),
+            .background(Blue01),
         contentAlignment = Alignment.Center
     ) {
 

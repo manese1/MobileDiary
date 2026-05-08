@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -25,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.manese.mobilediary.navigation.ROUT_LOGIN
 import com.manese.mobilediary.navigation.ROUT_REGISTER
 import com.manese.mobilediary.navigation.ROUT_REGISTER_STUDENT
+import com.manese.mobilediary.ui.theme.Gold01
 
 @Composable
 fun LoginScreen(
@@ -61,14 +63,7 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF1565C0),
-                        Color(0xFF42A5F5)
-                    )
-                )
-            )
+            .background(Blue01)
     ){
         Column(
             modifier = Modifier
@@ -81,7 +76,7 @@ fun LoginScreen(
             Text(
                 text = "Welcome To Mobile Diary",
                 style = MaterialTheme.typography.headlineMedium,
-                color = Color.White,
+                color = Gold01,
                 textAlign = TextAlign.Center
             )
 
@@ -89,8 +84,18 @@ fun LoginScreen(
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                label = { Text("Username") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text("Username", color = Color.White) },
+                textStyle = LocalTextStyle.current.copy(
+                    color = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Gold01,
+                    unfocusedBorderColor = Color.White,
+                    focusedLabelColor = Gold01,
+                    unfocusedLabelColor = Color.White,
+                    cursorColor = Gold01
+                )
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -99,8 +104,18 @@ fun LoginScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text("Email", color = Color.White) },
+                textStyle = LocalTextStyle.current.copy(
+                    color = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Gold01,
+                    unfocusedBorderColor = Color.White,
+                    focusedLabelColor = Gold01,
+                    unfocusedLabelColor = Color.White,
+                    cursorColor = Gold01
+                )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -109,9 +124,19 @@ fun LoginScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
+                label = { Text("Password", color = Color.White) },
+                textStyle = LocalTextStyle.current.copy(
+                    color = Color.White
+                ),
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Gold01,
+                    unfocusedBorderColor = Color.White,
+                    focusedLabelColor = Gold01,
+                    unfocusedLabelColor = Color.White,
+                    cursorColor = Gold01
+                )
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -121,7 +146,12 @@ fun LoginScreen(
                     //  Call ViewModel instead of manual logic
                     viewModel.login(email, password)
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Gold01,
+                    contentColor = Blue01
+                )
             ) {
                 Text("Login")
             }

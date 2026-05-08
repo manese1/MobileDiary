@@ -5,13 +5,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.manese.mobilediary.navigation.ROUT_HOME
 import com.manese.mobilediary.navigation.ROUT_REGISTER_STUDENT
+import com.manese.mobilediary.navigation.ROUT_UPLOAD_HOMEWORK
+import com.manese.mobilediary.ui.theme.Blue01
+import com.manese.mobilediary.ui.theme.Gold01
 
 // 🔹 Data model (temporary)
 data class Homework(
@@ -21,10 +26,12 @@ data class Homework(
     var isConfirmed: Boolean = false
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeworkScreen(
     navController: NavController,
-    role: String = "STUDENT" // STUDENT, PARENT, TEACHER
+    userName : String = "User",
+    role: String = "TEACHER" // STUDENT, PARENT, TEACHER
 ) {
 
     // 🔹 Sample data (replace with Firebase later)
@@ -39,6 +46,27 @@ fun HomeworkScreen(
     }
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text("Homework", color = Gold01)
+                },
+                colors = TopAppBarDefaults.topAppBarColors(Blue01),
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            navController.navigate("$ROUT_HOME/$userName/$role")
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Gold01
+                        )
+                    }
+                }
+            )
+        },
 
         // 👨‍🏫 Teacher gets FAB (Add Homework)
         floatingActionButton = {
@@ -50,10 +78,12 @@ fun HomeworkScreen(
                             "New Homework",
                             "Added by Teacher"
                         )
-                    }
+                    },
+                    containerColor = Gold01,
+                    contentColor = Blue01
                 ) {
-                    IconButton(onClick = {navController.navigate(ROUT_REGISTER_STUDENT)}) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add Homework")}
+                    IconButton(onClick = {navController.navigate(ROUT_UPLOAD_HOMEWORK)}) {
+                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add Homework", tint = Blue01)}
                 }
             }
         }
@@ -65,6 +95,7 @@ fun HomeworkScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp),
+
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
@@ -107,7 +138,7 @@ fun HomeworkCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 🔥 ROLE-BASED ACTIONS
+            // ROLE-BASED ACTIONS
             when (role) {
 
                 "STUDENT" -> {

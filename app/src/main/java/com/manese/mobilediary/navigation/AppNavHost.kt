@@ -2,10 +2,12 @@ package com.manese.mobilediary.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.manese.mobilediary.data.AnnouncementViewModel
 import com.manese.mobilediary.ui.screens.admin.AssignStudentClassScreen
 import com.manese.mobilediary.ui.screens.admin.CreateClassScreen
 import com.manese.mobilediary.ui.screens.announcements.AnnouncementScreen
@@ -42,7 +44,13 @@ fun AppNavHost(
             SplashScreen(navController)
         }
         composable(ROUT_ANNOUNCEMENTS) {
-            AnnouncementScreen(navController)
+
+            val viewModel: AnnouncementViewModel = viewModel()
+
+            AnnouncementScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
         composable(ROUT_HOMEWORK) {
             HomeworkScreen(navController)
@@ -88,7 +96,13 @@ fun AppNavHost(
             UploadHomeworkScreen(navController)
         }
         composable(ROUT_UPLOAD_ANNOUNCEMENT) {
-            UploadAnnouncementScreen(navController)
+
+            val viewModel: AnnouncementViewModel = viewModel()
+
+            UploadAnnouncementScreen(
+                viewModel = viewModel,
+                navController = navController
+            )
         }
         composable(ROUT_UPLOAD_REMARKS) {
             UploadRemarksScreen(navController)

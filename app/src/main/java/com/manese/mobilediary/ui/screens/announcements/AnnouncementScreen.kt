@@ -3,115 +3,156 @@ package com.manese.mobilediary.ui.screens.announcements
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.firebase.database.*
-import com.manese.mobilediary.models.Announcements
+import androidx.navigation.compose.rememberNavController
+import com.manese.mobilediary.data.AnnouncementViewModel
+import com.manese.mobilediary.models.Announcement
+import com.manese.mobilediary.navigation.ROUT_HOME
+import com.manese.mobilediary.navigation.ROUT_UPLOAD_ANNOUNCEMENT
+import com.manese.mobilediary.ui.theme.Blue01
+import com.manese.mobilediary.ui.theme.Gold01
+import com.manese.mobilediary.ui.theme.White01
+import kotlinx.coroutines.flow.MutableStateFlow
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnnouncementScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: AnnouncementViewModel,
+    userName: String = "User",
+    role: String = "TEACHER"
 ) {
 
-    val database =
-        FirebaseDatabase.getInstance().reference
+    val announcements by viewModel.announcements.collectAsState()
 
-    var announcements by remember {
-        mutableStateOf(listOf<Announcements>())
-    }
+    Scaffold(
 
-    // 🔥 Fetch from Firebase
-    LaunchedEffect(Unit) {
+        // 🔝 TOP APP BAR
+        topBar = {
+            TopAppBar(
 
-        database.child("announcements")
-            .addValueEventListener(object : ValueEventListener {
+                title = {
+                    Text(
+                        text = "Announcements",
+                        color = Gold01
+                    )
+                },
 
-                override fun onDataChange(snapshot: DataSnapshot) {
-
-                    val list = mutableListOf<Announcements>()
-
-                    for (snap in snapshot.children) {
-
-                        val announcement =
-                            snap.getValue(Announcements::class.java)
-
-                        if (announcement != null) {
-                            list.add(announcement)
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            navController.navigate("$ROUT_HOME/$userName/$role")
                         }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Gold01
+                        )
                     }
+                },
 
-                    announcements = list
-                }
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Blue01
+                )
+            )
+        },
 
-                override fun onCancelled(error: DatabaseError) {
+        // ➕ FAB (TEACHER ONLY)
+        floatingActionButton = {
 
-                }
-            })
-    }
+            if (role == "TEACHER") {
 
-    // UI
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
+                FloatingActionButton(
 
-        items(announcements) { announcement ->
+                    onClick = {
+                        navController.navigate(ROUT_UPLOAD_ANNOUNCEMENT)
+                    },
 
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+                    containerColor = Gold01,
+                    contentColor = Blue01
 
-                Column(
-                    modifier = Modifier.padding(16.dp)
                 ) {
 
-                    Text(
-                        text = announcement.title,
-                        style = MaterialTheme.typography.titleLarge
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Upload Announcement"
                     )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(text = announcement.message)
                 }
+            }
+        },
+
+        containerColor = White01
+
+    ) { paddingValues ->
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+
+            items(announcements) { item ->
+
+                AnnouncementCard(
+                    announcement = item
+                )
             }
         }
     }
 }
 
 @Composable
-fun AnnouncementCard(announcements: Announcements) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+fun AnnouncementCard(announcement: Announcement) {
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(6.dp)
+    ) {
+
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(announcements.title, style = MaterialTheme.typography.titleLarge)
+
+            Text(
+                text = announcement.title,
+                style = MaterialTheme.typography.titleLarge
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
-            Text(announcements.message)
+
+            Text(text = announcement.message)
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun AnnouncementStudentPreview() {
-    MaterialTheme {
-        AnnouncementScreen(
-            navController = androidx.navigation.compose.rememberNavController()
-        )
-    }
-}
+fun AnnouncementScreenPreview() {
 
-@Preview(showBackground = true)
-@Composable
-fun AnnouncementTeacherPreview() {
-    MaterialTheme {
-        AnnouncementScreen(
-            navController = androidx.navigation.compose.rememberNavController()
+    val fakeViewModel = object : AnnouncementViewModel() {
+
+        private val fakeData = MutableStateFlow(
+            listOf(
+                Announcement("School Reopening", "School opens Monday", "ALL", ""),
+                Announcement("Math Class Update", "Bring calculators", "CLASS", "8A")
+            )
         )
+
+        override val announcements = fakeData
+    }
+
+    MaterialTheme {
+        AnnouncementScreen(rememberNavController(), viewModel = fakeViewModel)
     }
 }

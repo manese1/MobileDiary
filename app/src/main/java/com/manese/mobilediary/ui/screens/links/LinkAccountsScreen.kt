@@ -4,9 +4,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.database.FirebaseDatabase
+import com.manese.mobilediary.ui.theme.Blue01
+import com.manese.mobilediary.ui.theme.Gold01
 
 @Composable
 fun LinkAccountsScreen(
@@ -27,7 +30,8 @@ fun LinkAccountsScreen(
 
         Text(
             text = "Link Parent to Student",
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineMedium,
+            color = Gold01
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -36,7 +40,14 @@ fun LinkAccountsScreen(
             value = parentUid,
             onValueChange = { parentUid = it },
             label = { Text("Parent UID") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Gold01,
+                unfocusedBorderColor = Blue01,
+                focusedLabelColor = Gold01,
+                unfocusedLabelColor = Blue01,
+                cursorColor = Gold01
+            )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -45,7 +56,14 @@ fun LinkAccountsScreen(
             value = studentUid,
             onValueChange = { studentUid = it },
             label = { Text("Student UID") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Gold01,
+                unfocusedBorderColor = Blue01,
+                focusedLabelColor = Gold01,
+                unfocusedLabelColor = Blue01,
+                cursorColor = Gold01
+            )
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -62,7 +80,11 @@ fun LinkAccountsScreen(
                     .setValue(linkMap)
 
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Blue01,
+                contentColor = Gold01
+            )
         ) {
             Text("Link Accounts")
         }

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CheckboxDefaults.colors
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.unit.dp
@@ -20,6 +22,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.manese.mobilediary.R
 import com.manese.mobilediary.navigation.*
+import com.manese.mobilediary.ui.theme.Blue01
+import com.manese.mobilediary.ui.theme.Blue02
+import com.manese.mobilediary.ui.theme.Gold01
+import com.manese.mobilediary.ui.theme.PurpleGrey80
+import com.manese.mobilediary.ui.theme.White01
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,14 +38,18 @@ fun HomeScreen(
 
     Scaffold(
 
-        // 🔝 TOP BAR
+        //TOP BAR
         topBar = {
             TopAppBar(
                 title = {
                     Column {
-                        Text("Mobile Diary")
+                        Text(
+                            text = "Mobile Diary",
+                            color = Gold01
+                        )
                         Text(
                             text = "Your School Name",
+                            color = Gold01,
                             style = MaterialTheme.typography.labelSmall
                         )
                     }
@@ -49,18 +60,20 @@ fun HomeScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
-                        // 👉 Replace with your app logo if you want
+                        // Replace with your app logo if you want
                         Icon(
                             imageVector = Icons.Default.School,
-                            contentDescription = "App Logo"
+                            contentDescription = "App Logo",
+                            tint = Gold01
                         )
 
                         Spacer(modifier = Modifier.width(8.dp))
 
-                        // 👉 Replace with your school logo
+                        // Replace with your school logo
                         Icon(
                             imageVector = Icons.Default.AccountBalance,
-                            contentDescription = "School Logo"
+                            contentDescription = "School Logo",
+                            tint = Color.White
                         )
 
                         // Example if using real images:
@@ -77,43 +90,50 @@ fun HomeScreen(
                 actions = {
                     if (role == "TEACHER") {
                         IconButton(onClick = {navController.navigate(ROUT_REGISTER_STUDENT)}) {
-                            Icon(imageVector = Icons.Default.Add, contentDescription = "Add Student")
+                            Icon(imageVector = Icons.Default.Add, contentDescription = "Add Student", tint = Color.White)
                         }
                     }
-                }
+                },
+
+                colors = TopAppBarDefaults.topAppBarColors(
+
+                    containerColor = Blue01
+                )
             )
         },
 
         // 📱 BOTTOM NAVIGATION
         bottomBar = {
-            NavigationBar {
+            NavigationBar (
+                containerColor = Blue01
+            ) {
 
                 NavigationBarItem(
                     selected = true,
-                    onClick = { navController.navigate(ROUT_HOME) },
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text("Home") }
+                    onClick = { navController.navigate("$ROUT_HOME/$userName/$role") },
+                    icon = { Icon(Icons.Default.Home, contentDescription = "Home", tint = Gold01) },
+                    label = { Text("Home", color = Gold01) }
                 )
 
                 NavigationBarItem(
                     selected = false,
                     onClick = { navController.navigate(ROUT_HOMEWORK) },
-                    icon = { Icon(Icons.Default.Book, contentDescription = "Homework") },
-                    label = { Text("Homework") }
+                    icon = { Icon(Icons.Default.Book, contentDescription = "Homework", tint = Gold01) },
+                    label = { Text("Homework", color = Gold01) }
                 )
 
                 NavigationBarItem(
                     selected = false,
                     onClick = { navController.navigate(ROUT_ANNOUNCEMENTS) },
-                    icon = { Icon(Icons.Default.Notifications, contentDescription = "Announcements") },
-                    label = { Text("Announcement") }
+                    icon = { Icon(Icons.Default.Notifications, contentDescription = "Announcements", tint = Gold01) },
+                    label = { Text("Announcement", color = Gold01) }
                 )
 
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate(navController.navigate("$ROUT_PROFILE/$userName/$role")) },
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
-                    label = { Text("Profile") }
+                    onClick = { navController.navigate("$ROUT_PROFILE/$userName/$role") },
+                    icon = { Icon(Icons.Default.Person, contentDescription = "Profile", tint = Gold01) },
+                    label = { Text("Profile", color = Gold01) }
                 )
             }
         }
@@ -126,6 +146,7 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(24.dp)
+                .background(White01)
         ) {
 
             Text(
@@ -179,7 +200,8 @@ fun DashboardCard(
             .fillMaxWidth()
             .height(100.dp)
             .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Row(
             modifier = Modifier

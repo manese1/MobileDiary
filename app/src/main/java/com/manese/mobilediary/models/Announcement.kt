@@ -1,9 +1,8 @@
 package com.manese.mobilediary.models
 
-data class Announcements(
-    val id: String = "",
+data class Announcement(
     val title: String = "",
     val message: String = "",
-    val scope: String = "",
+    val scope: String = "ALL",
     val classId: String = ""
 )
