@@ -47,11 +47,6 @@ fun HomeScreen(
                             text = "Mobile Diary",
                             color = Gold01
                         )
-                        Text(
-                            text = "Your School Name",
-                            color = Gold01,
-                            style = MaterialTheme.typography.labelSmall
-                        )
                     }
                 },
                 navigationIcon = {
@@ -65,15 +60,6 @@ fun HomeScreen(
                             imageVector = Icons.Default.School,
                             contentDescription = "App Logo",
                             tint = Gold01
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        // Replace with your school logo
-                        Icon(
-                            imageVector = Icons.Default.AccountBalance,
-                            contentDescription = "School Logo",
-                            tint = Color.White
                         )
 
                         // Example if using real images:

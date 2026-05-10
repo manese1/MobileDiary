@@ -11,20 +11,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.manese.mobilediary.data.HomeworkViewModel
 import com.manese.mobilediary.navigation.ROUT_HOME
 import com.manese.mobilediary.navigation.ROUT_REGISTER_STUDENT
 import com.manese.mobilediary.navigation.ROUT_UPLOAD_HOMEWORK
 import com.manese.mobilediary.ui.theme.Blue01
 import com.manese.mobilediary.ui.theme.Gold01
-
-// 🔹 Data model (temporary)
-data class Homework(
-    val title: String,
-    val description: String,
-    var isCompleted: Boolean = false,
-    var isConfirmed: Boolean = false
-)
+import com.manese.mobilediary.models.HomeworkDto
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,16 +29,9 @@ fun HomeworkScreen(
     role: String = "TEACHER" // STUDENT, PARENT, TEACHER
 ) {
 
-    // 🔹 Sample data (replace with Firebase later)
-    var homeworkList by remember {
-        mutableStateOf(
-            listOf(
-                Homework("Math Assignment", "Page 23 - Q1-10"),
-                Homework("English Essay", "Write about your holiday"),
-                Homework("Science Project", "Build a simple circuit")
-            )
-        )
-    }
+    val viewModel: HomeworkViewModel = viewModel()
+    val homeworkList = viewModel.homeworkList
+
 
     Scaffold(
         topBar = {
@@ -71,19 +59,20 @@ fun HomeworkScreen(
         // 👨‍🏫 Teacher gets FAB (Add Homework)
         floatingActionButton = {
             if (role == "TEACHER") {
+
                 FloatingActionButton(
                     onClick = {
-                        // TEMP: Add dummy homework
-                        homeworkList = homeworkList + Homework(
-                            "New Homework",
-                            "Added by Teacher"
-                        )
+                        navController.navigate(ROUT_UPLOAD_HOMEWORK)
                     },
                     containerColor = Gold01,
                     contentColor = Blue01
                 ) {
-                    IconButton(onClick = {navController.navigate(ROUT_UPLOAD_HOMEWORK)}) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add Homework", tint = Blue01)}
+
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Homework",
+                        tint = Blue01
+                    )
                 }
             }
         }
@@ -105,8 +94,13 @@ fun HomeworkScreen(
                     homework = hw,
                     role = role,
                     onUpdate = { updated ->
-                        homeworkList = homeworkList.map {
-                            if (it.title == updated.title) updated else it
+
+                        val index = homeworkList.indexOfFirst {
+                            it.title == updated.title
+                        }
+
+                        if (index != -1) {
+                            homeworkList[index] = updated
                         }
                     }
                 )
@@ -117,9 +111,9 @@ fun HomeworkScreen(
 
 @Composable
 fun HomeworkCard(
-    homework: Homework,
+    homework: HomeworkDto,
     role: String,
-    onUpdate: (Homework) -> Unit
+    onUpdate: (HomeworkDto) -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -128,13 +122,13 @@ fun HomeworkCard(
         Column(modifier = Modifier.padding(16.dp)) {
 
             Text(
-                text = homework.title,
+                text = "${homework.title}",
                 style = MaterialTheme.typography.titleLarge
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = homework.description)
+            Text(text = "${homework.description}")
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -142,15 +136,17 @@ fun HomeworkCard(
             when (role) {
 
                 "STUDENT" -> {
-                    Button(
-                        onClick = {
-                            onUpdate(homework.copy(isCompleted = true))
-                        },
-                        enabled = !homework.isCompleted
-                    ) {
-                        Text(
-                            if (homework.isCompleted) "Completed" else "Mark as Complete"
-                        )
+                    homework.isCompleted?.let {
+                        Button(
+                            onClick = {
+                                onUpdate(homework.copy(isCompleted = true))
+                            },
+                            enabled = !it
+                        ) {
+                            Text(
+                                if (homework.isCompleted == true) "Completed" else "Mark as Complete"
+                            )
+                        }
                     }
                 }
 
@@ -159,10 +155,10 @@ fun HomeworkCard(
                         onClick = {
                             onUpdate(homework.copy(isConfirmed = true))
                         },
-                        enabled = homework.isCompleted && !homework.isConfirmed
+                        enabled = homework.isCompleted == true && !homework.isConfirmed!!
                     ) {
                         Text(
-                            if (homework.isConfirmed) "Confirmed"
+                            if (homework.isConfirmed == true) "Confirmed"
                             else "Confirm Completion"
                         )
                     }
@@ -173,8 +169,8 @@ fun HomeworkCard(
 
                         Text(
                             text = when {
-                                homework.isConfirmed -> "✔ Confirmed by Parent"
-                                homework.isCompleted -> "✔ Completed by Student"
+                                homework.isConfirmed == true -> "✔ Confirmed by Parent"
+                                homework.isCompleted == true -> "✔ Completed by Student"
                                 else -> "⏳ Pending"
                             }
                         )

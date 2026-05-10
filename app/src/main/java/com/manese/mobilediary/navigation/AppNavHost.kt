@@ -8,8 +8,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.manese.mobilediary.data.AnnouncementViewModel
+import com.manese.mobilediary.data.HomeworkViewModel
+import com.manese.mobilediary.data.RemarksViewModel
 import com.manese.mobilediary.ui.screens.admin.AssignStudentClassScreen
 import com.manese.mobilediary.ui.screens.admin.CreateClassScreen
+import com.manese.mobilediary.ui.screens.admin.RegisterParentScreen
 import com.manese.mobilediary.ui.screens.announcements.AnnouncementScreen
 import com.manese.mobilediary.ui.screens.announcements.UploadAnnouncementScreen
 import com.manese.mobilediary.ui.screens.auth.LoginScreen
@@ -55,7 +58,9 @@ fun AppNavHost(
         composable(ROUT_HOMEWORK) {
             HomeworkScreen(navController)
         }
-        composable("$ROUT_PROFILE/{userName}/{role}") { backStackEntry ->
+        composable(
+            route = "$ROUT_PROFILE/{userName}/{role}"
+        ) { backStackEntry ->
 
             val userName =
                 backStackEntry.arguments?.getString("userName") ?: "User"
@@ -70,12 +75,21 @@ fun AppNavHost(
             )
         }
         composable(ROUT_REMARKS) {
-            RemarksScreen(navController)
+            val viewModel: RemarksViewModel = viewModel()
+            RemarksScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
-        composable("$ROUT_HOME/{userName}/{role}") { backStackEntry ->
+        composable(
+            route = "$ROUT_HOME/{userName}/{role}"
+        ) { backStackEntry ->
 
-            val userName = backStackEntry.arguments?.getString("userName") ?: "User"
-            val role = backStackEntry.arguments?.getString("role") ?: "STUDENT"
+            val userName =
+                backStackEntry.arguments?.getString("userName") ?: "User"
+
+            val role =
+                backStackEntry.arguments?.getString("role") ?: "STUDENT"
 
             HomeScreen(
                 navController = navController,
@@ -93,7 +107,12 @@ fun AppNavHost(
             RegisterScreen(navController)
         }
         composable(ROUT_UPLOAD_HOMEWORK) {
-            UploadHomeworkScreen(navController)
+            val viewModel: HomeworkViewModel = viewModel()
+
+            UploadHomeworkScreen(
+                viewModel = viewModel,
+                navController = navController
+            )
         }
         composable(ROUT_UPLOAD_ANNOUNCEMENT) {
 
@@ -105,7 +124,13 @@ fun AppNavHost(
             )
         }
         composable(ROUT_UPLOAD_REMARKS) {
-            UploadRemarksScreen(navController)
+
+            val viewModel: RemarksViewModel = viewModel()
+
+            UploadRemarksScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
         composable(ROUT_LINK_ACCOUNTS) {
             LinkAccountsScreen(navController)
@@ -115,6 +140,9 @@ fun AppNavHost(
         }
         composable(ROUT_ASSIGN_CLASS) {
             AssignStudentClassScreen(navController)
+        }
+        composable(ROUT_REGISTER_PARENT) {
+            RegisterParentScreen(navController)
         }
     }
 }

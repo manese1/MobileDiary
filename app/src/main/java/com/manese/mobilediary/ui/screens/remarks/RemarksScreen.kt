@@ -11,31 +11,23 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.manese.mobilediary.data.RemarksViewModel
 import com.manese.mobilediary.navigation.*
 import com.manese.mobilediary.ui.theme.Blue01
 import com.manese.mobilediary.ui.theme.Gold01
-
-data class Remark(
-    val student: String,
-    val comment: String
-)
+import com.manese.mobilediary.models.RemarksDto
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RemarksScreen(
     navController: NavController,
+    viewModel: RemarksViewModel,
     userName: String = "User",
     role: String = "TEACHER"
 ) {
 
-    var remarks by remember {
-        mutableStateOf(
-            listOf(
-                Remark("", "Good performance"),
-                Remark("", "Needs improvement in math")
-            )
-        )
-    }
+    val remarks = viewModel.remarksList
 
     Scaffold(
 
@@ -73,21 +65,21 @@ fun RemarksScreen(
 
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate("$ROUT_HOME/$userName/$role") },
+                    onClick = {navController.navigate("$ROUT_HOME/$userName/$role")},
                     icon = { Icon(Icons.Default.Home, null, tint = Gold01) },
                     label = { Text("Home", color = Gold01) }
                 )
 
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate(ROUT_HOMEWORK) },
+                    onClick = { navController.navigate("$ROUT_HOMEWORK/$userName/$role") },
                     icon = { Icon(Icons.Default.Book, null, tint = Gold01) },
                     label = { Text("Homework", color = Gold01) }
                 )
 
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate(ROUT_ANNOUNCEMENTS) },
+                    onClick = { navController.navigate("$ROUT_ANNOUNCEMENTS/$userName/$role") },
                     icon = { Icon(Icons.Default.Notifications, null, tint = Gold01) },
                     label = { Text("Announcements", color = Gold01) }
                 )
@@ -103,11 +95,18 @@ fun RemarksScreen(
 
         floatingActionButton = {
             if (role == "TEACHER") {
-                FloatingActionButton(onClick = {
-                    remarks = remarks + Remark("Student", "New remark")
-                }) {
-                    IconButton(onClick = {navController.navigate(ROUT_UPLOAD_REMARKS)}) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add Remark", tint = Blue01)}
+
+                FloatingActionButton(
+                    onClick = {
+                        navController.navigate(ROUT_UPLOAD_REMARKS)
+                    },
+                    containerColor = Gold01,
+                    contentColor = Blue01
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Remark"
+                    )
                 }
             }
         }
@@ -122,19 +121,19 @@ fun RemarksScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(remarks) {
-                RemarkCard(it)
+                RemarksCard(it)
             }
         }
     }
 }
 
 @Composable
-fun RemarkCard(remark: Remark) {
+fun RemarksCard(remarks: RemarksDto) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Student: ${remark.student}")
+            Text("Student: ${remarks.studentName}")
             Spacer(modifier = Modifier.height(8.dp))
-            Text(remark.comment)
+            Text("Comment: ${remarks.comment}")
         }
     }
 }
@@ -143,6 +142,6 @@ fun RemarkCard(remark: Remark) {
 @Composable
 fun RemarksPreview() {
     MaterialTheme {
-        RemarksScreen(rememberNavController(), "TEACHER")
+        RemarksScreen(rememberNavController(), viewModel = viewModel())
     }
 }

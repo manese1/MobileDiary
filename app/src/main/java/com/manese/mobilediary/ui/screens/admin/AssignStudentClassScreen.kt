@@ -2,6 +2,8 @@ package com.manese.mobilediary.ui.screens.admin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -9,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.database.FirebaseDatabase
+import com.manese.mobilediary.navigation.ROUT_REGISTER
 import com.manese.mobilediary.ui.theme.Blue01
 import com.manese.mobilediary.ui.theme.Gold01
 import com.manese.mobilediary.ui.theme.White01
@@ -35,6 +38,12 @@ fun AssignStudentClassScreen(
                         text = "Assign Student",
                         color = Gold01
                     )
+                },
+
+                navigationIcon = {
+                    IconButton(onClick = {navController.navigate(ROUT_REGISTER)}) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back to Management Screen", tint = Gold01)
+                    }
                 },
 
                 colors = TopAppBarDefaults.topAppBarColors(

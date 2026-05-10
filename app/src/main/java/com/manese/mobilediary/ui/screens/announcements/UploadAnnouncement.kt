@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.manese.mobilediary.data.AnnouncementViewModel
 import com.manese.mobilediary.models.Announcement
 import com.manese.mobilediary.navigation.ROUT_ANNOUNCEMENTS
+import com.manese.mobilediary.navigation.ROUT_REGISTER
 import com.manese.mobilediary.ui.theme.Blue01
 import com.manese.mobilediary.ui.theme.Gold01
 import com.manese.mobilediary.ui.theme.White01
@@ -45,7 +46,7 @@ fun UploadAnnouncementScreen(
 
                     IconButton(
                         onClick = {
-                            navController.navigate(ROUT_ANNOUNCEMENTS)
+                            navController.navigate(ROUT_REGISTER)
                         }
                     ) {
 
@@ -126,8 +127,8 @@ fun UploadAnnouncementScreen(
 
                 colors = TextFieldDefaults.colors(
 
-                    focusedContainerColor = White01,
-                    unfocusedContainerColor = White01,
+                    focusedContainerColor = Gold01,
+                    unfocusedContainerColor = Blue01,
 
                     focusedIndicatorColor = Gold01,
                     unfocusedIndicatorColor = Blue01,

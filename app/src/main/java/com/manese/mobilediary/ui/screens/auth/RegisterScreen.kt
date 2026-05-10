@@ -110,6 +110,27 @@ fun RegisterScreen(navController: NavController) {
                     }
                 }
 
+                //Parent Register
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = White01),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.navigate(ROUT_REGISTER_PARENT)
+                        }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.Person, contentDescription = null, tint = Blue01)
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Text("Register Parent", color = Blue01)
+                    }
+                }
+
                 //Linking Card
                 Card(
                     colors = CardDefaults.cardColors(containerColor = White01),
@@ -193,7 +214,7 @@ fun RegisterScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // ⚠️ Admin note
+            // Admin note
             Text(
                 text = "Admin Access Only",
                 style = MaterialTheme.typography.bodySmall,
